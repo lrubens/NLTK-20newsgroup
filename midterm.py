@@ -1,5 +1,6 @@
 import time
 import pandas as pd
+import numpy as np
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 import re
@@ -21,8 +22,10 @@ from nltk.stem.snowball import SnowballStemmer
 from nltk.stem import PorterStemmer
 from nltk.tokenize import RegexpTokenizer
 from sklearn.datasets import fetch_20newsgroups
+from nltk.probability import FreqDist
 from sklearn.cluster import KMeans
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
 
 
 def remove_tabs(words):
@@ -134,7 +137,7 @@ def preprocess(words):
     words = remove_stopwords(words)
     words = remove_tabs(words)
     words = remove_emails(words)
-    # words = lemmatize(words)
+    words = lemmatize(words)
     # words = stem_words(words)
     words = remove_smallwords(words)
     return words
@@ -163,11 +166,18 @@ def get_data():
 
 
 def main():
-    # countVect = CountVectorizer(tokenizer=customTokenizer(), max_features=2000, max_df=0.5, min_df=2)
-    # term_mat = countVect.fit_transform(dataset)
     raw_data = get_data()
     corpus = preprocess(raw_data)
-    print(corpus)
+    count_vect = CountVectorizer(max_df=0.85, max_features=1000)
+    word_count_vect = count_vect.fit_transform(corpus)
+    print(count_vect.vocabulary_)
+    print(word_count_vect.shape)
+    # print(list(count_vect.vocabulary_.keys())[:10])
+    # tfidf_transformer = TfidfTransformer()
+    # vectors = tfidf_transformer.fit(word_count_vect)
+    # feature_names = vectors
+    # X_train_tfidf.shape
+    # print(corpus)
     # print(preprocessed_text)
 
 if __name__ == "__main__":
